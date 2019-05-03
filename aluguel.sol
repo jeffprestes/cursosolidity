@@ -34,8 +34,8 @@ ex.: #| e nem conter espacos nos seus nomes.
 
 
 --- COMENTARIOS
-Repare que tudo que fica entre /*   * /  ou textos logo apos // eh ignorado
-pelo compilador. Sao os chamados *comentarios* e iremo utilizarmo muito aqui.
+Repare que tudo que fica entre /*   * /  ou texto logo apos // eh ignorado
+pelo compilador. Sao os chamados *comentarios* e os utilizaremos muito aqui.
 
 */
 contract Aluguel {

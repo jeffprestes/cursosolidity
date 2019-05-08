@@ -45,7 +45,7 @@ contract Leilao {
         maiorLance = msg.value;
          
         if (maiorLance != 0) {
-            lancesRealizados[maiorOfertante] += maiorLance;
+            lancesRealizados[maiorOfertante] = maiorLance;
         }
         
         emit novoMaiorLance (msg.sender, msg.value);

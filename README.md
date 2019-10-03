@@ -2,4 +2,4 @@
 
 ## Secao: curso de solidity
 
-Material para aulas de Solidity
+Material para aulas de Solidity.

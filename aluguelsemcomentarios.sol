@@ -2,7 +2,7 @@
 (c) Desenvolvido por Jeff Prestes
 This work is licensed under a Creative Commons Attribution 4.0 International License.
 */
-pragma solidity 0.5.8;
+pragma solidity 0.5.12;
 
 contract Aluguel {
     string            public                       locatario;
@@ -19,11 +19,7 @@ contract Aluguel {
         return valor;
     }
  
-    function simulaMulta( uint256 mesesRestantes, 
-                    uint256 totalMesesContato) 
-    public
-    view
-    returns(uint256 valorMulta) {
+    function simulaMulta( uint256 mesesRestantes, uint256 totalMesesContato) public view returns(uint256 valorMulta) {
         valorMulta = valor*numeroMaximoLegalDeAlgueisParaMulta;
         valorMulta = valorMulta/totalMesesContato;
         valorMulta = valorMulta*mesesRestantes;
@@ -35,5 +31,4 @@ contract Aluguel {
         valorDoAcrescimo = ((valor*percentualReajuste)/100);
         valor = valor + valorDoAcrescimo;
     }
-    
 }

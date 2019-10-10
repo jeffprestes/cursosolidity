@@ -10,12 +10,15 @@ contract Aluguel
     string public locador;
     uint256 private valor;
     uint256 constant public numeroMaximoLegalDeAlgueisParaMulta = 3;
+    bool[] public statusPagamento;
+    address payable public contaLocatario;
 
-    constructor(string memory nomeLocador, string memory nomeLocatario, uint256 valorDoAluguel) public 
+    constructor(string memory nomeLocador, string memory nomeLocatario, address payable paramContaLocatario, uint256 valorDoAluguel) public 
     {
         locador = nomeLocador;
         locatario = nomeLocatario;
         valor = valorDoAluguel;
+        contaLocatario = paramContaLocatario;
     }
  
     function valorAtualDoAluguel() public view returns (uint256) 
@@ -54,4 +57,11 @@ contract Aluguel
             valor = valor+((valor*percentual)/100);
         }
     }
+    
+    function receberPagamento() public payable {
+        require(msg.value>=valor, "Valor insuficiente");
+        contaLocatario.transfer(msg.value);
+        statusPagamento.push(true);
+    }
+    
 }

@@ -53,21 +53,21 @@ contract Leilao {
             3o  é o incrementador (ou decrementador) do indice
         */
         for (uint i=0; i<ofertantes.length; i++) {
-            Ofertante memory leiloeiroPerdedor = ofertantes[i];
-            if (!leiloeiroPerdedor.jaFoiReembolsado) {
-                leiloeiroPerdedor.enderecoCarteira.transfer(leiloeiroPerdedor.oferta);
-                leiloeiroPerdedor.jaFoiReembolsado = true;
+            Ofertante memory ofertantePerdedor = ofertantes[i];
+            if (!ofertantePerdedor.jaFoiReembolsado) {
+                ofertantePerdedor.enderecoCarteira.transfer(ofertantePerdedor.oferta);
+                ofertantePerdedor.jaFoiReembolsado = true;
             }
         }
         
         //Crio o ofertante
-        Ofertante memory concorrenteVencedorTemporario = Ofertante(nomeLeiloeiro, enderecoCarteiraLeiloeiro, msg.value, false);
+        Ofertante memory ofertanteVencedorTemporario = Ofertante(nomeLeiloeiro, enderecoCarteiraLeiloeiro, msg.value, false);
         
         //Adiciono o novo concorrente vencedor temporario no array de ofertantes
-        ofertantes.push(concorrenteVencedorTemporario);
+        ofertantes.push(ofertanteVencedorTemporario);
         
         //Adiciono o novo concorrente vencedor temporario na lista (mapa) de ofertantes
-        listaOfertantes[concorrenteVencedorTemporario.enderecoCarteira] = concorrenteVencedorTemporario;
+        listaOfertantes[ofertanteVencedorTemporario.enderecoCarteira] = ofertanteVencedorTemporario;
     
         emit novoMaiorLance (msg.sender, msg.value);
     }

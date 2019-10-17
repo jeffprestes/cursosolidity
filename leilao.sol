@@ -37,7 +37,7 @@ contract Leilao {
     }
 
 
-    function lance(string memory nomeLeiloeiro, address payable enderecoCarteiraLeiloeiro) public payable {
+    function lance(string memory nomeOfertante, address payable enderecoCarteiraOfertante) public payable {
         require(now <= prazoFinalLeilao, "Leilao encerrado.");
         require(msg.value > maiorLance, "Ja foram apresentados lances maiores.");
         
@@ -61,7 +61,7 @@ contract Leilao {
         }
         
         //Crio o ofertante
-        Ofertante memory ofertanteVencedorTemporario = Ofertante(nomeLeiloeiro, enderecoCarteiraLeiloeiro, msg.value, false);
+        Ofertante memory ofertanteVencedorTemporario = Ofertante(nomeOfertante, enderecoCarteiraOfertante, msg.value, false);
         
         //Adiciono o novo concorrente vencedor temporario no array de ofertantes
         ofertantes.push(ofertanteVencedorTemporario);

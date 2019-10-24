@@ -1,4 +1,4 @@
-pragma solidity 0.5.9;
+pragma solidity 0.5.12;
 
 contract ERC20Interface {
     function totalSupply() public view returns(uint amount);
@@ -29,9 +29,8 @@ contract Owned {
 
 contract Mortal is Owned  {
     function kill() public {
-        if (msg.sender == contractOwner) {
-            selfdestruct(contractOwner);
-        }
+        require(msg.sender==contractOwner, "Only owner can destroy the contract");
+        selfdestruct(contractOwner);
     }
 }
 

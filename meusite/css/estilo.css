@@ -1,0 +1,22 @@
+h1 
+{
+    color: blue;
+    font-weight: bold;
+}
+/*
+Isso é um comentario
+*/
+#tituloform
+{
+    font-style: italic;
+}
+
+.esverdeado
+{
+    background-color: lightgreen;
+}
+
+body 
+{
+    background-image: url("../imagens/fundo.jpg");
+}

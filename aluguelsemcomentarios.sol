@@ -1,9 +1,8 @@
 /*
-SPDX-License-Identifier: CC-BY-4.0
 (c) Desenvolvido por Jeff Prestes
 This work is licensed under a Creative Commons Attribution 4.0 International License.
 */
-pragma solidity 0.6.10;
+pragma solidity 0.5.12;
 
 contract Aluguel 
 {
@@ -63,6 +62,14 @@ contract Aluguel
         require(msg.value>=valor, "Valor insuficiente");
         contaLocatario.transfer(msg.value);
         statusPagamento.push(true);
+    }
+    
+    function retornaTexto(uint256 _parametro) public view returns (string memory) {
+        if ((valor * _parametro) > 5000) {
+            return "Muito caro";
+        } else {
+            return "Preço razoavel";
+        }
     }
     
 }

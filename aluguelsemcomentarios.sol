@@ -1,8 +1,9 @@
 /*
+SPDX-License-Identifier: CC-BY-4.0
 (c) Desenvolvido por Jeff Prestes
 This work is licensed under a Creative Commons Attribution 4.0 International License.
 */
-pragma solidity 0.5.12;
+pragma solidity 0.6.10;
 
 contract Aluguel 
 {
@@ -11,6 +12,12 @@ contract Aluguel
     uint256 private valor;
     uint256 constant public numeroMaximoLegalDeAlgueisParaMulta = 3;
     bool[] public statusPagamento;
+    /*
+    0 - 01/2020 = true
+    1 - 02/2020 = true
+    2 - 03/2020 = true
+    3 - 04/2020 = true
+    */
     address payable public contaLocatario;
 
     constructor(string memory nomeLocador, string memory nomeLocatario, address payable paramContaLocatario, uint256 valorDoAluguel) public 
@@ -53,16 +60,19 @@ contract Aluguel
     function aplicaMulta(uint256 mesesRestantes, uint256 percentual) public
     {
         require(mesesRestantes<30, "Periodo de contrato inválido");
-        for (uint i=1; i<mesesRestantes; i++) {
+        for (uint numeroDeVoltas=0; numeroDeVoltas < mesesRestantes; numeroDeVoltas=numeroDeVoltas+2) {
             valor = valor+((valor*percentual)/100);
         }
     }
+    
     
     function receberPagamento() public payable {
         require(msg.value>=valor, "Valor insuficiente");
         contaLocatario.transfer(msg.value);
         statusPagamento.push(true);
     }
+    
+    //msg.value = valor em wei enviado ao contrato
     
     function retornaTexto(uint256 _parametro) public view returns (string memory) {
         if ((valor * _parametro) > 5000) {
@@ -72,4 +82,7 @@ contract Aluguel
         }
     }
     
+    function quantosPagamentosJaForamFeitos() public view returns (uint256) {
+        return statusPagamento.length;
+    }
 }

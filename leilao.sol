@@ -1,4 +1,9 @@
-pragma solidity 0.5.12;
+/*
+SPDX-License-Identifier: CC-BY-4.0
+(c) Desenvolvido por Jeff Prestes
+This work is licensed under a Creative Commons Attribution 4.0 International License.
+*/
+pragma solidity 0.6.10;
 
 contract Leilao {
 

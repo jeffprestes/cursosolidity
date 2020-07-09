@@ -4,7 +4,7 @@ SPDX-License-Identifier: CC-BY-4.0
 This work is licensed under a Creative Commons Attribution 4.0 International License.
 */
 
-pragma solidity ^0.6.8;
+pragma solidity ^0.6.1;
 
 /**
  * @dev Interface of the ERC20 standard as defined in the EIP.
@@ -110,10 +110,10 @@ contract TicketERC20 is IERC20, Mortal {
     mapping (address=>mapping (address=>uint256)) ownerAllowances;
 
     constructor() public {
-        myName = "EPD Creditos - 23 06 2020 11 30";
-        mySymbol = "EPDC202006231130";
+        myName = "Ficha de Chocolate";
+        mySymbol = "CHOCO1";
         decimals = 2;
-        _mint(msg.sender, (100000000 * (10 ** decimals)));
+        _mint(msg.sender, (46 * (10 ** decimals)));
     }
 
     function name() public view returns(string memory) {
@@ -137,11 +137,11 @@ contract TicketERC20 is IERC20, Mortal {
     }
 
     function transfer(address to, uint256 amount) public override  hasEnoughBalance(msg.sender, amount) tokenAmountValid(amount) returns(bool) {
-        balances[msg.sender] -= amount;
-        balances[to] += amount;
+        balances[msg.sender] = balances[msg.sender] - amount;
+        balances[to] = balances[to] + amount;
         emit Transfer(msg.sender, to, amount);
         return true;
-    }
+    } 
 
     function approve(address spender, uint limit) public override returns(bool) {
         ownerAllowances[msg.sender][spender] = limit;
@@ -152,7 +152,7 @@ contract TicketERC20 is IERC20, Mortal {
     function transferFrom(address from, address to, uint256 amount) public override 
     hasEnoughBalance(from, amount) isAllowed(msg.sender, from, amount) tokenAmountValid(amount)
     returns(bool) {
-        balances[from] -= amount;
+        balances[from] = balances[from] - amount;
         balances[to] += amount;
         ownerAllowances[from][msg.sender] = amount;
         emit Transfer(from, to, amount);
@@ -179,8 +179,9 @@ contract TicketERC20 is IERC20, Mortal {
         _;
     }
 
-    modifier tokenAmountValid(uint amount) {
+    modifier tokenAmountValid(uint256 amount) {
         require(amount > 0);
+        require(amount <= myTotalSupply);
         _;
     }
 

@@ -4,7 +4,7 @@ SPDX-License-Identifier: CC-BY-4.0
 This work is licensed under a Creative Commons Attribution 4.0 International License.
 */
 
-pragma solidity ^0.6.1;
+pragma solidity 0.7.2;
 
 /**
  * @dev Interface of the ERC20 standard as defined in the EIP.
@@ -83,7 +83,7 @@ interface IERC20 {
 contract Owned {
     address payable contractOwner;
 
-    constructor() public { 
+    constructor() { 
         contractOwner = msg.sender; 
     }
     
@@ -109,7 +109,7 @@ contract TicketERC20 is IERC20, Mortal {
     mapping (address=>uint256) balances;
     mapping (address=>mapping (address=>uint256)) ownerAllowances;
 
-    constructor() public {
+    constructor() {
         myName = "Ficha de Chocolate";
         mySymbol = "CHOCO1";
         decimals = 2;
@@ -165,6 +165,12 @@ contract TicketERC20 is IERC20, Mortal {
         myTotalSupply = myTotalSupply + amount;
         balances[account] = balances[account] + amount;
         emit Transfer(address(0), account, amount);
+    }
+    
+    function purchase() public payable {
+        require(msg.value >= 1 ether);
+        transfer(msg.sender, 100);
+        contractOwner.transfer(msg.value);
     }
 
     modifier hasEnoughBalance(address owner, uint amount) {

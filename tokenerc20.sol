@@ -80,6 +80,7 @@ interface IERC20 {
     event Approval(address indexed owner, address indexed spender, uint256 value);
 }
 
+/// @title Manages the contract owner
 contract Owned {
     address payable contractOwner;
 
@@ -92,7 +93,7 @@ contract Owned {
     }
 }
 
-
+/// @title Mortal allows the owner to kill the contract
 contract Mortal is Owned  {
     function kill() public {
         require(msg.sender==contractOwner, "Only owner can destroy the contract");
@@ -100,6 +101,7 @@ contract Mortal is Owned  {
     }
 }
 
+/// @title ERC-20 Token template
 contract TicketERC20 is IERC20, Mortal {
     string private myName;
     string private mySymbol;

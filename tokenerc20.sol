@@ -4,7 +4,7 @@ SPDX-License-Identifier: CC-BY-4.0
 This work is licensed under a Creative Commons Attribution 4.0 International License.
 */
 
-pragma solidity 0.7.2;
+pragma solidity 0.8.0;
 
 /**
  * @dev Interface of the ERC20 standard as defined in the EIP.
@@ -84,7 +84,7 @@ contract Owned {
     address payable contractOwner;
 
     constructor() { 
-        contractOwner = msg.sender; 
+        contractOwner = payable(msg.sender); 
     }
     
     function whoIsTheOwner() public view returns(address) {

@@ -8,7 +8,7 @@ This work is licensed under a Creative Commons Attribution 4.0 International Lic
 saiba avaliar a sintaxe do seu contrato com base na 'regra gramatical' com a qual voce escreveu o contrato
 Lembre-se: A sintaxe do Solidity pode mudar de versao em versao.
 */
-pragma solidity ^0.6.8;
+pragma solidity 0.8.4;
 
 /*
 Voce usa a palavra chave *contract* para iniciar a declaracao do contrato, 
@@ -84,7 +84,7 @@ contract Aluguel {
     e atribuimos esses valores as variaveis do contrato que ficarao registradas
     no Blockchain e ficarao acessiveis as funcoes do contrato
 */
-    constructor(string memory nomeLocador, string memory nomeLocatario, uint256 valorDoAluguel) public {
+    constructor(string memory nomeLocador, string memory nomeLocatario, uint256 valorDoAluguel)  {
 /*
 --- PARAMETROS
     Parametros sao como variaveis porem o seu valor eh definido externamente, ou seja, 

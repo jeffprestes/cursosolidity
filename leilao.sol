@@ -3,7 +3,7 @@ SPDX-License-Identifier: CC-BY-4.0
 (c) Desenvolvido por Jeff Prestes
 This work is licensed under a Creative Commons Attribution 4.0 International License.
 */
-pragma solidity 0.6.10;
+pragma solidity 0.8.4;
 
 contract Leilao {
 
@@ -36,14 +36,14 @@ contract Leilao {
     constructor(
         uint _duracaoLeilao,
         address payable _contaGovernamental
-    ) public {
+    ) {
         contaGovernamental = _contaGovernamental;
-        prazoFinalLeilao = now + _duracaoLeilao;
+        prazoFinalLeilao = block.timestamp + _duracaoLeilao;
     }
 
 
     function lance(string memory nomeOfertante, address payable enderecoCarteiraOfertante) public payable {
-        require(now <= prazoFinalLeilao, "Leilao encerrado.");
+        require(block.timestamp <= prazoFinalLeilao, "Leilao encerrado.");
         require(msg.value > maiorLance, "Ja foram apresentados lances maiores.");
         
         maiorOfertante = msg.sender;
@@ -80,7 +80,9 @@ contract Leilao {
    
     function finalizaLeilao() public somenteGoverno {
        
-        require(now >= prazoFinalLeilao, "Leilao ainda nao encerrado.");
+        require(block.timestamp >= prazoFinalLeilao, "Leilao ainda nao encerrado.");
+        //   !encerrado é uma expressão mais curta para checar se a condição é falsa
+        //   é o mesmo que escrever encerrado == false 
         require(!encerrado, "Leilao encerrado.");
 
         encerrado = true;

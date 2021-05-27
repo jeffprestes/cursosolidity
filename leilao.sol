@@ -7,10 +7,10 @@ pragma solidity 0.8.4;
 
 contract Leilao {
 
-    struct Ofertante {
+    struct Oferta {
         string nome;
         address payable enderecoCarteira;
-        uint oferta;
+        uint valorDaOferta;
         bool jaFoiReembolsado;
     }
     
@@ -20,8 +20,8 @@ contract Leilao {
     address public maiorOfertante;
     uint public maiorLance;
 
-    mapping(address => Ofertante) public listaOfertantes;
-    Ofertante[] public ofertantes;
+    mapping(address => Oferta) public listaOfertas;
+    Oferta[] public ofertas;
 
     bool public encerrado;
 
@@ -57,22 +57,24 @@ contract Leilao {
                 o loop ou não 
             3o  é o incrementador (ou decrementador) do indice
         */
-        for (uint i=0; i<ofertantes.length; i++) {
-            Ofertante storage ofertantePerdedor = ofertantes[i];
-            if (!ofertantePerdedor.jaFoiReembolsado) {
-                ofertantePerdedor.enderecoCarteira.transfer(ofertantePerdedor.oferta);
-                ofertantePerdedor.jaFoiReembolsado = true;
+        for (uint i=0; i<ofertas.length; i++) {
+            Oferta storage ofertaPerdedora = ofertas[i];
+            //   !ofertantePerdedor.jaFoiReembolsado é uma expressão mais curta para checar se a condição é falsa
+            //   é o mesmo que escrever ofertantePerdedor.jaFoiReembolsado == false 
+            if (!ofertaPerdedora.jaFoiReembolsado) {
+                ofertaPerdedora.enderecoCarteira.transfer(ofertaPerdedora.valorDaOferta);
+                ofertaPerdedora.jaFoiReembolsado = true;
             }
         }
         
         //Crio o ofertante
-        Ofertante memory ofertanteVencedorTemporario = Ofertante(nomeOfertante, enderecoCarteiraOfertante, msg.value, false);
+        Oferta memory ofertaVencedoraTemporaria = Oferta(nomeOfertante, enderecoCarteiraOfertante, msg.value, false);
         
         //Adiciono o novo concorrente vencedor temporario no array de ofertantes
-        ofertantes.push(ofertanteVencedorTemporario);
+        ofertas.push(ofertaVencedoraTemporaria);
         
         //Adiciono o novo concorrente vencedor temporario na lista (mapa) de ofertantes
-        listaOfertantes[ofertanteVencedorTemporario.enderecoCarteira] = ofertanteVencedorTemporario;
+        listaOfertas[ofertaVencedoraTemporaria.enderecoCarteira] = ofertaVencedoraTemporaria;
     
         emit novoMaiorLance (msg.sender, msg.value);
     }
@@ -89,5 +91,9 @@ contract Leilao {
         emit fimDoLeilao(maiorOfertante, maiorLance);
 
         contaGovernamental.transfer(address(this).balance);
+    }
+    
+    function retornaMaiorOfertante() public view somenteGoverno returns (address) {
+        return maiorOfertante;
     }
 }

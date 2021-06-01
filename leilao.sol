@@ -8,17 +8,20 @@ pragma solidity 0.8.4;
 contract Leilao {
 
     struct Oferta {
-        string nome;
+        string nomeDoOfertante;
         address payable enderecoCarteira;
         uint valorDaOferta;
-        bool jaFoiReembolsado;
+        bool jaFoiReembolsado;  // true = sim  ou  false = não 
     }
     
     address payable public contaGovernamental;
+    address payable public carteiraLeiloeiro;
     uint public prazoFinalLeilao;
 
     address public maiorOfertante;
     uint public maiorLance;
+    
+    uint constant public percentualLeiloeiro = 10;
 
     mapping(address => Oferta) public listaOfertas;
     Oferta[] public ofertas;
@@ -35,10 +38,12 @@ contract Leilao {
 
     constructor(
         uint _duracaoLeilao,
-        address payable _contaGovernamental
+        address payable _contaGovernamental,
+        address payable _carteiraLeiloeiro
     ) {
         contaGovernamental = _contaGovernamental;
         prazoFinalLeilao = block.timestamp + _duracaoLeilao;
+        carteiraLeiloeiro = _carteiraLeiloeiro;
     }
 
 
@@ -62,7 +67,14 @@ contract Leilao {
             //   !ofertantePerdedor.jaFoiReembolsado é uma expressão mais curta para checar se a condição é falsa
             //   é o mesmo que escrever ofertantePerdedor.jaFoiReembolsado == false 
             if (!ofertaPerdedora.jaFoiReembolsado) {
-                ofertaPerdedora.enderecoCarteira.transfer(ofertaPerdedora.valorDaOferta);
+                // Valores de transferencia tem de ser definidos entre parenteses 
+                // do metodo transfer e os valores sao contados em wei 
+                //ofertaPerdedora.enderecoCarteira.transfer(1000);
+                uint valorReembolsoOfertante = (ofertaPerdedora.valorDaOferta * (100-percentualLeiloeiro))/100;
+                //                                 10000                      * (100-10)                 /100     
+                ofertaPerdedora.enderecoCarteira.transfer(valorReembolsoOfertante);
+                uint valorComissaoLeiloeiro = (ofertaPerdedora.valorDaOferta * percentualLeiloeiro)/100;
+                carteiraLeiloeiro.transfer(valorComissaoLeiloeiro);
                 ofertaPerdedora.jaFoiReembolsado = true;
             }
         }

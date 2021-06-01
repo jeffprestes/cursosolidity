@@ -33,6 +33,8 @@ contract Leilao {
 
     modifier somenteGoverno {
         require(msg.sender == contaGovernamental, "Somente Governo pode realizar essa operacao");
+//      Este _ significa dizer para a EVM (Ethereum Virtual Machine) continuar a executar o que vem na 
+//      sequencia na clausula caso o requirimento acima tenha sido atendido
         _;
     }
 

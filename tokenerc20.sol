@@ -4,7 +4,7 @@ SPDX-License-Identifier: CC-BY-4.0
 This work is licensed under a Creative Commons Attribution 4.0 International License.
 */
 
-pragma solidity 0.8.0;
+pragma solidity 0.8.4;
 
 /**
  * @dev Interface of the ERC20 standard as defined in the EIP.
@@ -170,8 +170,9 @@ contract TicketERC20 is IERC20, Mortal {
     }
     
     function purchase() public payable {
-        require(msg.value >= 1 ether);
+        require(msg.value >= 10 gwei);
         transfer(msg.sender, 100);
+        //                   1,00
         contractOwner.transfer(msg.value);
     }
 

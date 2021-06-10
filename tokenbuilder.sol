@@ -91,6 +91,11 @@ contract Owned {
     function whoIsTheOwner() public view returns(address) {
         return contractOwner;
     }
+    
+    function changeOwner(address payable _newOwner) public {
+        require(contractOwner == msg.sender);
+        contractOwner = _newOwner;
+    }
 }
 
 
@@ -118,7 +123,7 @@ contract TokenBuilder {
         uint256 _initialSupply) 
         external
     {
-        TokenERC20 token = new TokenERC20(_name, _symbol, _decimals, _initialSupply);
+        TokenERC20 token = new TokenERC20(_name, _symbol, _decimals, _initialSupply, payable(msg.sender));
         require(address(token) != address(0), "Token was not created");
         emit NewTokenCreated(address(token), token.name());
     }
@@ -140,13 +145,15 @@ contract TokenERC20 is IERC20, Mortal {
         string memory _name, 
         string memory _symbol, 
         uint8 _decimals, 
-        uint256 _initialSupply) 
+        uint256 _initialSupply,
+        address payable _contractOwner) 
     {
         require(_initialSupply<=999999999999, "High amount");
         myName = _name;
         mySymbol = _symbol;
         decimals = _decimals;
-        _mint(msg.sender, (_initialSupply * (10 ** decimals)));
+        changeOwner(_contractOwner);
+        _mint(_contractOwner, (_initialSupply * (10 ** decimals)));
     }
 
     function name() public view returns(string memory) {

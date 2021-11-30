@@ -168,6 +168,14 @@ contract TicketERC20 is IERC20, Mortal {
         balances[account] = balances[account] + amount;
         emit Transfer(address(0), account, amount);
     }
+
+    function burn(address account, uint256 amount) public returns (bool) {
+        require(account != address(0), "ERC20: burn from address");
+        
+        balances[account] = balances[account] - amount;
+        myTotalSupply = myTotalSupply - amount;
+        emit Transfer(address(0), account, amount);
+    }
     
     function purchase() public payable {
         require(msg.value >= 10 gwei);

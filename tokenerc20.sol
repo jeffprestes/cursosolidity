@@ -175,6 +175,7 @@ contract TicketERC20 is IERC20, Mortal {
         balances[account] = balances[account] - amount;
         myTotalSupply = myTotalSupply - amount;
         emit Transfer(address(0), account, amount);
+        return true;
     }
     
     function purchase() public payable {

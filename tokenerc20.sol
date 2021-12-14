@@ -4,7 +4,7 @@ SPDX-License-Identifier: CC-BY-4.0
 This work is licensed under a Creative Commons Attribution 4.0 International License.
 */
 
-pragma solidity 0.8.4;
+pragma solidity 0.8.10;
 
 /**
  * @dev Interface of the ERC20 standard as defined in the EIP.
@@ -84,6 +84,11 @@ interface IERC20 {
 contract Owned {
     address payable contractOwner;
 
+    modifier onlyOwner() {
+        require(msg.sender == contractOwner, "only owner can perform this operation");
+        _;
+    }
+
     constructor() { 
         contractOwner = payable(msg.sender); 
     }
@@ -91,6 +96,13 @@ contract Owned {
     function whoIsTheOwner() public view returns(address) {
         return contractOwner;
     }
+
+    function changeOwner(address _newOwner) onlyOwner public returns (bool) {
+        require(_newOwner != address(0x0), "only valid address");
+        contractOwner = payable(_newOwner);
+        return true;
+    }
+    
 }
 
 /// @title Mortal allows the owner to kill the contract
@@ -111,11 +123,29 @@ contract TicketERC20 is IERC20, Mortal {
     mapping (address=>uint256) balances;
     mapping (address=>mapping (address=>uint256)) ownerAllowances;
 
+    modifier hasEnoughBalance(address owner, uint amount) {
+        uint balance;
+        balance = balances[owner];
+        require (balance >= amount); 
+        _;
+    }
+
+    modifier isAllowed(address spender, address tokenOwner, uint amount) {
+        require (amount <= ownerAllowances[tokenOwner][spender]);
+        _;
+    }
+
+    modifier tokenAmountValid(uint256 amount) {
+        require(amount > 0);
+        require(amount <= myTotalSupply);
+        _;
+    }
+
     constructor() {
-        myName = "Ficha de Chocolate";
-        mySymbol = "CHOCO1";
+        myName = "TokenTest";
+        mySymbol = "TTest";
         decimals = 2;
-        _mint(msg.sender, (46 * (10 ** decimals)));
+        mint(msg.sender, (1000000000 * (10 ** decimals)));
     }
 
     function name() public view returns(string memory) {
@@ -161,15 +191,16 @@ contract TicketERC20 is IERC20, Mortal {
         return true;
     }
     
-    function _mint(address account, uint256 amount) internal virtual {
+    function mint(address account, uint256 amount) public onlyOwner returns (bool) {
         require(account != address(0), "ERC20: mint to the zero address");
 
         myTotalSupply = myTotalSupply + amount;
         balances[account] = balances[account] + amount;
         emit Transfer(address(0), account, amount);
+        return true;
     }
 
-    function burn(address account, uint256 amount) public returns (bool) {
+    function burn(address account, uint256 amount) public onlyOwner returns (bool) {
         require(account != address(0), "ERC20: burn from address");
         
         balances[account] = balances[account] - amount;
@@ -177,30 +208,4 @@ contract TicketERC20 is IERC20, Mortal {
         emit Transfer(address(0), account, amount);
         return true;
     }
-    
-    function purchase() public payable {
-        require(msg.value >= 10 gwei);
-        transfer(msg.sender, 100);
-        //                   1,00
-        contractOwner.transfer(msg.value);
-    }
-
-    modifier hasEnoughBalance(address owner, uint amount) {
-        uint balance;
-        balance = balances[owner];
-        require (balance >= amount); 
-        _;
-    }
-
-    modifier isAllowed(address spender, address tokenOwner, uint amount) {
-        require (amount <= ownerAllowances[tokenOwner][spender]);
-        _;
-    }
-
-    modifier tokenAmountValid(uint256 amount) {
-        require(amount > 0);
-        require(amount <= myTotalSupply);
-        _;
-    }
-
 }

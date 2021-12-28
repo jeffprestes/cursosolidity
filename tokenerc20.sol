@@ -4,12 +4,14 @@ SPDX-License-Identifier: CC-BY-4.0
 This work is licensed under a Creative Commons Attribution 4.0 International License.
 */
 
-pragma solidity 0.8.10;
+pragma solidity 0.8.11;
 
+// OpenZeppelin Contracts v4.4.1 (token/ERC20/IERC20.sol)
 /**
  * @dev Interface of the ERC20 standard as defined in the EIP.
  */
 interface IERC20 {
+
     /**
      * @dev Returns the amount of tokens in existence.
      */
@@ -63,7 +65,11 @@ interface IERC20 {
      *
      * Emits a {Transfer} event.
      */
-    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
+    function transferFrom(
+        address sender,
+        address recipient,
+        uint256 amount
+    ) external returns (bool);
 
     /**
      * @dev Emitted when `value` tokens are moved from one account (`from`) to
@@ -78,6 +84,28 @@ interface IERC20 {
      * a call to {approve}. `value` is the new allowance.
      */
     event Approval(address indexed owner, address indexed spender, uint256 value);
+}
+
+/**
+ * @dev Interface for the optional metadata functions from the ERC20 standard.
+ *
+ * _Available since v4.1._
+ */
+interface IERC20Metadata is IERC20 {
+    /**
+     * @dev Returns the name of the token.
+     */
+    function name() external view returns (string memory);
+
+    /**
+     * @dev Returns the symbol of the token.
+     */
+    function symbol() external view returns (string memory);
+
+    /**
+     * @dev Returns the decimals places of the token.
+     */
+    function decimals() external view returns (uint8);
 }
 
 /// @title Manages the contract owner
@@ -114,11 +142,11 @@ contract Mortal is Owned  {
 }
 
 /// @title ERC-20 Token template
-contract TicketERC20 is IERC20, Mortal {
+contract USDC is IERC20Metadata, Mortal {
     string private myName;
     string private mySymbol;
     uint256 private myTotalSupply;
-    uint256 public decimals;
+    uint8 private myDecimals;
 
     mapping (address=>uint256) balances;
     mapping (address=>mapping (address=>uint256)) ownerAllowances;
@@ -142,10 +170,10 @@ contract TicketERC20 is IERC20, Mortal {
     }
 
     constructor() {
-        myName = "TokenTest";
-        mySymbol = "TTest";
-        decimals = 2;
-        mint(msg.sender, (1000000000 * (10 ** decimals)));
+        myName = "USD Coin";
+        mySymbol = "USDC";
+        myDecimals = 6;
+        mint(msg.sender, (1000000000 * (10 ** myDecimals)));
     }
 
     function name() public view returns(string memory) {
@@ -158,6 +186,10 @@ contract TicketERC20 is IERC20, Mortal {
 
     function totalSupply() public override view returns(uint256) {
         return myTotalSupply;
+    }
+
+    function decimals() public override view returns (uint8) {
+        return myDecimals;
     }
 
     function balanceOf(address tokenOwner) public override view returns(uint256) {
@@ -176,6 +208,7 @@ contract TicketERC20 is IERC20, Mortal {
     } 
 
     function approve(address spender, uint limit) public override returns(bool) {
+        require(spender != address(0), "ERC20: approve to the zero address");
         ownerAllowances[msg.sender][spender] = limit;
         emit Approval(msg.sender, spender, limit);
         return true;

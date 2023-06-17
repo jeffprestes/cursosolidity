@@ -89,19 +89,17 @@ contract ERC20 {
         uint256 amount
     ) public virtual returns (bool) {
         uint256 allowed = allowance[from][msg.sender]; // Saves gas for limited approvals.
-
-        if (allowed != type(uint256).max) allowance[from][msg.sender] = allowed - amount;
-
+        require(allowed > 0, "you are not allowed to perform this transfer");
+        require(allowed != type(uint256).max, "invalid value");
+        require(balanceOf[from]>=amount, "unsuficient balance");
+        allowance[from][msg.sender] = allowed - amount;
         balanceOf[from] -= amount;
-
         // Cannot overflow because the sum of all user
         // balances can't exceed the max uint256 value.
         unchecked {
             balanceOf[to] += amount;
         }
-
         emit Transfer(from, to, amount);
-
         return true;
     }
 

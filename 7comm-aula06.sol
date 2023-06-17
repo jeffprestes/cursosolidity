@@ -44,14 +44,10 @@ contract ERC20 {
                                CONSTRUCTOR
     //////////////////////////////////////////////////////////////*/
 
-    constructor(
-        string memory _name,
-        string memory _symbol,
-        uint8 _decimals
-    ) {
-        name = _name;
-        symbol = _symbol;
-        decimals = _decimals;
+    constructor() {
+        name = "Token Teste";
+        symbol = "T7COMM";
+        decimals = 2;
 
         INITIAL_CHAIN_ID = block.chainid;
         INITIAL_DOMAIN_SEPARATOR = computeDomainSeparator();

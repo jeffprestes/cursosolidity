@@ -48,6 +48,7 @@ contract ERC20 {
         name = "Token Teste";
         symbol = "T7COMM";
         decimals = 2;
+        mint(msg.sender, 100000);
 
         INITIAL_CHAIN_ID = block.chainid;
         INITIAL_DOMAIN_SEPARATOR = computeDomainSeparator();

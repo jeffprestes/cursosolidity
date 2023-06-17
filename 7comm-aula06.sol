@@ -66,6 +66,7 @@ contract ERC20 {
     }
 
     function transfer(address to, uint256 amount) public virtual returns (bool) {
+        require(balanceOf[msg.sender]>=amount, "unsuficient balance");
         balanceOf[msg.sender] -= amount;
 
         // Cannot overflow because the sum of all user

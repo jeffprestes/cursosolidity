@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Meu NFT</title>
+  </head>
+  <body>
+    <header>
+      <h1>Meu NFT</h1>
+    </header>
+    <section>
+      <h2>Dados NFT</h2>
+      <h3>Nome: <span id="nftNome">Buscando informação...</span></h3>
+      <h5>Descrição: <span id="nftDesc">Buscando informação...</span></h5>
+      <div id="divImg" style="display: none">
+        <img width="200" height="200" id="imgNFT" src="" alt="imagem NFT" />
+      </div>
+    </section>
+    <section>
+      <h2>Novo NFT</h2>
+      <div>
+        <form action="" name="formMint" id="formMint" method="get">
+          <label for="formTo">Endereço da destinatário:</label>
+          <br /><br />
+          <input type="text" placeholder="<0x...>" required name="formTo" id="formTo" />
+          <br /><br />
+          <label for="formMetadados">URL Metadados:</label>
+          <br /><br />
+          <input type="text" placeholder="https://..." required name="formMetadados" id="formMetadados" />
+          <br /><br />
+          <input type="button" value="Mintar (gerar) NFT" onclick="mintar()" />
+        </form>
+      </div>
+    </section>
+    <hr />
+    <section>
+      <h2>Rede e Infra</h2>
+      <h3>Conta selectionada: <span id="networkAccount">&nbsp;</span></h3>
+      <h3>Rede selecionada: <span id="networkNetworkID">&nbsp;</span></h3>
+    </section>
+    <script src="corsapiquet.abi.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.6.1/ethers.umd.min.js"></script>
+    <script>
+      async function init() {
+        if (window.ethereum == null) {
+          // If MetaMask is not installed, we use the default provider,
+          // which is backed by a variety of third-party services (such
+          // as INFURA). They do not have private keys installed so are
+          // only have read-only access
+          console.log("MetaMask not installed; using read-only defaults");
+          //provider = ethers.getDefaultProvider();
+          provider = new ethers.InfuraProvider("maticmum");
+          network = await provider.getNetwork();
+          contract = new ethers.Contract("0x96311083e6Df0e990138D585C668c2708Ed86eB7", abi, provider);
+          console.log("selected provider: ", provider);
+          console.log("network:", network);
+        } else {
+          // Connect to the MetaMask EIP-1193 object. This is a standard
+          // protocol that allows Ethers access to make all read-only
+          // requests through MetaMask.
+          provider = new ethers.BrowserProvider(window.ethereum);
+          // It also provides an opportunity to request access to write
+          // operations, which will be performed by the private key
+          // that MetaMask manages for the user.
+          alert("O Metamask irá pedir aprovação para acessar essa página.\nPor favor, aceite.");
+          signer = await provider.getSigner();
+          network = await provider.getNetwork();
+          contract = new ethers.Contract("0x96311083e6Df0e990138D585C668c2708Ed86eB7", abi, signer);
+          console.log("signer: ", signer);
+          console.log("contract: ", contract);
+          const networkAccount = document.getElementById("networkAccount");
+          networkAccount.innerHTML = signer.address;
+        }
+        console.log("selected provider: ", provider);
+        console.log("network:", network);
+        const networkNetworkID = document.getElementById("networkNetworkID");
+        networkNetworkID.innerHTML = network.chainId;
+        // Create a contract
+        const nftNomeObj = await contract.name();
+        const nftNome = document.getElementById("nftNome");
+        nftNome.innerHTML = nftNomeObj;
+        const metadadosURL = await contract.tokenURI(0);
+        console.log("metadadosURL: ", metadadosURL);
+        const metadadadosResp = await fetch(metadadosURL);
+        console.log("metadadadosResp: ", metadadadosResp);
+        const metadados = await metadadadosResp.json();
+        console.log("metadadadosResp Body: ", metadados);
+        const nftDesc = document.getElementById("nftDesc");
+        nftDesc.innerHTML = metadados.description;
+        const imgNFT = document.getElementById("imgNFT");
+        imgNFT.src = metadados.image;
+        const divImg = document.getElementById("divImg");
+        divImg.style.display = "block";
+
+        //eventos
+        const filtroEvento = contract.filters.Transfer;
+        eventos = await contract.queryFilter(filtroEvento, -90000);
+        console.log("Numero de transferencias: ", eventos.length);
+        console.log("Logs de transferencias: ", eventos);
+      }
+    </script>
+    <script>
+      async function mintar() {
+        event.preventDefault();
+        const form = document.getElementById("formMint");
+        alert("Aguarde e confirme a transação no Metamask");
+        const tx = await contract.safeMint(form.formTo.value, form.formMetadados.value);
+        console.log("tx enviada: ", tx);
+        alert("Transação enviada a Blockchain. Aguarde.\nTx ID:" + tx.hash);
+        const txReceipt = await tx.wait();
+        console.log("txReceipt: ", txReceipt);
+        if (txReceipt.status === 1) {
+          alert("Parabéns! Novo NFT gerado");
+          form.reset();
+        }
+      }
+      let signer = null;
+      let provider;
+      let network;
+      let contract;
+      init();
+    </script>
+  </body>
+</html>

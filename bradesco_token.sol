@@ -237,7 +237,7 @@ contract USDC is IERC20Metadata, Owned {
         
         balances[account] = balances[account] - amount;
         myTotalSupply = myTotalSupply - amount;
-        emit Transfer(address(0), account, amount);
+        emit Transfer(account, address(0), amount);
         return true;
     }
 }

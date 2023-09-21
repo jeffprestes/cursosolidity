@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.19;
 
-// Cadastro: 0xF5d7882fC5248efC814Adc765fAb168DE45c3536
+// Cadastro: 0x90bd50B003A79b8C99C402476D297A2cE50fa3ca
 
 contract Cadastro {
 
@@ -10,7 +10,7 @@ contract Cadastro {
         string primeiroNome;
         string sobreNome;
         address payable endereco; //0x0
-        bytes32 hashConta; // 0x0
+        bytes32 hashConta; // 0x0        
         bool existe; //false
     }
 
@@ -20,8 +20,7 @@ contract Cadastro {
 
     function addCliente(
         string memory _primeiroNome,
-        string memory _sobreNome,
-        address payable _endereco,
+        string memory _sobreNome,        
         string memory _agencia,
         string memory _conta
     ) external returns (bool) {
@@ -29,7 +28,9 @@ contract Cadastro {
         bytes memory bTemp = bytes(strTemp);
         bytes32 hashTemp = keccak256(bTemp);
 
-        Cliente memory cliente = Cliente(totalClientes, _primeiroNome, _sobreNome, _endereco, hashTemp, true);
+        Custodia custodiaTemp = new Custodia(hashTemp);
+
+        Cliente memory cliente = Cliente(totalClientes, _primeiroNome, _sobreNome, payable(address(custodiaTemp)), hashTemp, true);
         totalClientes++;
         
         clientes.push(cliente);
@@ -43,4 +44,19 @@ contract Cadastro {
         return (cliente_, existe);
     }
 
+}
+
+contract Custodia {
+    bytes32 public hashConta;
+
+    event EtherRecebido();
+
+    constructor(bytes32 _hashConta) {
+        hashConta = _hashConta;
+    }
+
+    receive() external payable {
+        emit EtherRecebido();
+    }
+    
 }

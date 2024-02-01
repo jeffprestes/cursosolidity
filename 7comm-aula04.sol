@@ -13,7 +13,7 @@ contract CadastroClientes {
     }
 
     modifier somenteContaAberta(address _enderecoCliente) {        
-        require(clientes[_enderecoCliente].status == true, "conta nao existente ou fechada");
+        require(clientes[_enderecoCliente].status, "conta nao existente ou fechada");
         _;
     }
 
@@ -24,19 +24,19 @@ contract CadastroClientes {
     external returns(bool) {
         require(_depositoInicial>0, "Sem dinheiro, sem conta");
         require(_enderecoCliente != address(0), "endereco invalido");
-        require(clientes[_enderecoCliente].status == false, "conta existente e aberta");
+        require(!clientes[_enderecoCliente].status, "conta existente e aberta");
         Conta memory novaConta = Conta(_nomeCliente, _enderecoCliente, _depositoInicial, true);
         clientes[_enderecoCliente] = novaConta;
         totalDeContas++;
         return true;
     }
 
-    function setSaldo(address _enderecoCliente, uint _novoValor) 
+    function setSaldo(address _enderecoCliente, uint novoValor_) 
     external 
     somenteContaAberta(_enderecoCliente)
     returns(bool) {        
-        require(_novoValor > 0, "valor invalido");
-        clientes[_enderecoCliente].saldo = _novoValor;
+        require(novoValor_ > 0, "valor invalido");
+        clientes[_enderecoCliente].saldo = novoValor_;
         return true;
     }
 

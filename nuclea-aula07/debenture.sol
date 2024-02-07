@@ -20,8 +20,8 @@ import "./titulo.sol";
     string public rating;
 
 
-    constructor() {
-        _emissor = "Empresa Energia S/A";
+    constructor(string memory emissor_) {
+        _emissor = emissor_;
         _dataEmissao = block.timestamp;
         _valor = 100000000;
         _decimais = 2;

@@ -5,49 +5,69 @@ import "./owner.sol";
 import "./titulo.sol";
 
 /**
- * @title Custodia
- * @dev Armazena e controla a custodia de varios titulos do owner
+ * @title Debenture
+ * @dev Operacoes de uma debenture
  * @author Jeff Prestes
  */
- contract Custodia is Owner {
+ contract Debenture is Titulo, Owner {
 
-  address[] private titulos;
+    string _emissor;
+    uint256 immutable _dataEmissao;
+    uint256 _valor;
+    uint8 immutable _decimais;
+    uint256 _prazoPagamento;
+    uint16 _fracoes;
+    string public rating;
 
-  event NovoTituloEmCustodia(address enderecoNovoTitulo, string emissor);
 
-  /**
-   * @dev Adiciona um titulo a custodia
-   * @param _enderecoTitulo endereco do titulo a ser adicionado
-   */
-  function adicionaTitulo(address _enderecoTitulo) external onlyOwner {
-    Titulo titulo = Titulo(_enderecoTitulo);
-    require(titulo.valorNominal() > 1000, "Valor muito baixo para ser custodiado");
-    titulos.push(_enderecoTitulo);
-    emit NovoTituloEmCustodia(address(titulo), titulo.nomeEmissor());
-  }
+    constructor() {
+        _emissor = "Empresa Energia S/A";
+        _dataEmissao = block.timestamp;
+        _valor = 100000000;
+        _decimais = 2;
+        _prazoPagamento = _dataEmissao + 90 days;
+        rating = "BBB-";
+        _fracoes = 1000;
+        emit NovoPrazoPagamento(_dataEmissao, _prazoPagamento);
+    }
 
-  /**
-   * @dev Retorna a quantidade de titulos na custodia
-   */
-  function quantidadeTitulos() external view returns (uint256) {
-    return titulos.length;
-  }
+    /**
+     * @dev Retorna o valor nominal.
+     */
+    function valorNominal() external view returns (uint256) {
+        return _valor;
+    }
 
-  /**
-   * @dev Retorna o endereco de um titulo na custodia
-   * @param index posicao do titulo na custodia
-   */
-  function enderecoTitulo(uint256 index) public view returns (address) {
-    return titulos[index];
-  }
+    /**
+     * @dev Retorna o nome do Emissor.
+     */
+    function nomeEmissor() external view returns (string memory) {
+        return _emissor;
+    }
 
-  /**
-   * @dev Retorna dados de um titulo na custodia
-   * @param index posicao do titulo na custodia
-   * @return valorNominal, nomeEmissor, dataEmissao
-   */
-  function detalheTitulo(uint256 index) external view returns (uint256, string memory, uint256) {
-    Titulo titulo = Titulo(enderecoTitulo(index));
-    return (titulo.valorNominal(), titulo.nomeEmissor(), titulo.dataEmissao());
-  }
+    /**
+     * @dev Retorna a data da emissao.
+     */
+    function dataEmissao() external view returns (uint256) {
+        return _dataEmissao;
+    }
+
+    /**
+    * @dev muda o rating
+    * @notice dependendo da situacao economica a empresa avaliadora pode mudar o rating
+    * @param novoRating novo rating da debenture
+    */
+    function mudaRating(string memory novoRating) external onlyOwner returns (bool) {
+        rating = novoRating;
+        return true;
+    }
+
+    /**
+    * @dev retorna o valor da variavel fracoes
+    * @notice informa o numero de fracoes da debenture
+    */
+    function fracoes() external view returns (uint16) {
+        return _fracoes;
+    }
+
  }

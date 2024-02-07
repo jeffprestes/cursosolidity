@@ -62,6 +62,12 @@ import "./titulo.sol";
         return true;
     }
 
+    function alteraFracoes(uint16 fracoes_) external onlyOwner returns (bool) {
+        require(fracoes_ >=100, "numero de fracoes baixo");
+        _fracoes = fracoes_;
+        return true;
+    }
+
     /**
     * @dev retorna o valor da variavel fracoes
     * @notice informa o numero de fracoes da debenture

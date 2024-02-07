@@ -9,6 +9,7 @@ pragma solidity 0.8.19;
 contract Owner {
 
     address public owner;
+    uint256 public visitas;
     
     // event for EVM logging
     event OwnerSet(address indexed oldOwner, address indexed newOwner);
@@ -21,6 +22,7 @@ contract Owner {
         // It is often a good idea to use 'require' to check if functions are called correctly.
         // As a second argument, you can also provide an explanation about what went wrong.
         require(msg.sender == owner, "Somente o owner pode executar essa operacao");
+        visitas++;
         _;
     }
     
@@ -40,6 +42,7 @@ contract Owner {
         emit OwnerSet(owner, newOwner);
         owner = newOwner;
     }
+
 
     /**
      * @dev Return owner address 

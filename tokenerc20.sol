@@ -4,14 +4,12 @@ SPDX-License-Identifier: CC-BY-4.0
 This work is licensed under a Creative Commons Attribution 4.0 International License.
 */
 
-pragma solidity 0.8.11;
+pragma solidity 0.8.19;
 
-// OpenZeppelin Contracts v4.4.1 (token/ERC20/IERC20.sol)
 /**
  * @dev Interface of the ERC20 standard as defined in the EIP.
  */
 interface IERC20 {
-
     /**
      * @dev Returns the amount of tokens in existence.
      */
@@ -65,11 +63,7 @@ interface IERC20 {
      *
      * Emits a {Transfer} event.
      */
-    function transferFrom(
-        address sender,
-        address recipient,
-        uint256 amount
-    ) external returns (bool);
+    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
 
     /**
      * @dev Emitted when `value` tokens are moved from one account (`from`) to
@@ -86,30 +80,8 @@ interface IERC20 {
     event Approval(address indexed owner, address indexed spender, uint256 value);
 }
 
-/**
- * @dev Interface for the optional metadata functions from the ERC20 standard.
- *
- * _Available since v4.1._
- */
-interface IERC20Metadata is IERC20 {
-    /**
-     * @dev Returns the name of the token.
-     */
-    function name() external view returns (string memory);
-
-    /**
-     * @dev Returns the symbol of the token.
-     */
-    function symbol() external view returns (string memory);
-
-    /**
-     * @dev Returns the decimals places of the token.
-     */
-    function decimals() external view returns (uint8);
-}
-
 /// @title Manages the contract owner
-contract Owned {
+contract Ownable {
     address payable contractOwner;
 
     modifier onlyOwner() {
@@ -133,20 +105,12 @@ contract Owned {
     
 }
 
-/// @title Mortal allows the owner to kill the contract
-contract Mortal is Owned  {
-    function kill() public {
-        require(msg.sender==contractOwner, "Only owner can destroy the contract");
-        selfdestruct(contractOwner);
-    }
-}
-
 /// @title ERC-20 Token template
-contract USDC is IERC20Metadata, Mortal {
+contract TicketERC20 is IERC20, Ownable {
     string private myName;
     string private mySymbol;
     uint256 private myTotalSupply;
-    uint8 private myDecimals;
+    uint256 public decimals;
 
     mapping (address=>uint256) balances;
     mapping (address=>mapping (address=>uint256)) ownerAllowances;
@@ -170,10 +134,10 @@ contract USDC is IERC20Metadata, Mortal {
     }
 
     constructor() {
-        myName = "USD Coin";
-        mySymbol = "USDC";
-        myDecimals = 6;
-        mint(msg.sender, (1000000000 * (10 ** myDecimals)));
+        myName = "Token Nuclea Series 01 2024";
+        mySymbol = "NC012024";
+        decimals = 2;
+        mint(msg.sender, (1000000000 * (10 ** decimals)));
     }
 
     function name() public view returns(string memory) {
@@ -186,10 +150,6 @@ contract USDC is IERC20Metadata, Mortal {
 
     function totalSupply() public override view returns(uint256) {
         return myTotalSupply;
-    }
-
-    function decimals() public override view returns (uint8) {
-        return myDecimals;
     }
 
     function balanceOf(address tokenOwner) public override view returns(uint256) {
@@ -208,7 +168,6 @@ contract USDC is IERC20Metadata, Mortal {
     } 
 
     function approve(address spender, uint limit) public override returns(bool) {
-        require(spender != address(0), "ERC20: approve to the zero address");
         ownerAllowances[msg.sender][spender] = limit;
         emit Approval(msg.sender, spender, limit);
         return true;
@@ -219,7 +178,7 @@ contract USDC is IERC20Metadata, Mortal {
     returns(bool) {
         balances[from] = balances[from] - amount;
         balances[to] += amount;
-        ownerAllowances[from][msg.sender] = amount;
+        ownerAllowances[from][msg.sender] = ownerAllowances[from][msg.sender] - amount;
         emit Transfer(from, to, amount);
         return true;
     }
@@ -238,7 +197,7 @@ contract USDC is IERC20Metadata, Mortal {
         
         balances[account] = balances[account] - amount;
         myTotalSupply = myTotalSupply - amount;
-        emit Transfer(address(0), account, amount);
+        emit Transfer(account, address(0), amount);
         return true;
     }
 }

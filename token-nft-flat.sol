@@ -4,7 +4,7 @@ SPDX-License-Identifier: CC-BY-4.0
 This work is licensed under a Creative Commons Attribution 4.0 International License.
 */
 
-pragma solidity 0.8.4;
+pragma solidity 0.8.19;
 
 /**
  * @title Counters
@@ -128,12 +128,6 @@ abstract contract Context {
         return msg.data;
     }
 }
-
-// File: @openzeppelin/contracts/utils/Address.sol
-
-
-
-pragma solidity ^0.8.0;
 
 /**
  * @dev Collection of functions related to the address type
@@ -930,13 +924,6 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
     function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal virtual { }
 }
 
-// File: @openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol
-
-
-
-pragma solidity ^0.8.0;
-
-
 
 /**
  * @dev This implements an optional extension of {ERC721} defined in the EIP that adds
@@ -1154,23 +1141,22 @@ abstract contract ERC721URIStorage is ERC721 {
 
 
 
-contract ApoioReflorestamento is ERC721URIStorage {
+contract Renavan is ERC721URIStorage {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
-    constructor() ERC721("Reflorestamento-Teste", "RFL01") {}
+    constructor() ERC721("RenavanTokenizado", "RENAVAN") {}
 
-    function awardItem(address supplier, string memory tokenURL)
+    function registra(address proprietario, string memory tokenURL)
         public
         returns (uint256)
     {
         _tokenIds.increment();
 
         uint256 newItemId = _tokenIds.current();
-        _mint(supplier, newItemId);
+        _mint(proprietario, newItemId);
         _setTokenURI(newItemId, tokenURL);
 
         return newItemId;
     }
 }
-

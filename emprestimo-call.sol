@@ -3,7 +3,7 @@ pragma solidity 0.8.19;
 
 contract EmprestimoCall {
 
-    address public addTaxa = 0xEed2fE736e53E65412A3c3b8326260218bD40c16;
+    address public addTaxa = 0x53958CAB8B8549970B2A8a63075D2FA2ea33c256;
 
     function setTaxaComCall(uint256 _val) public returns (bytes memory) {
         (bool success, bytes memory data) = addTaxa.call(abi.encodeWithSignature("setTaxaBase(uint256)", _val));

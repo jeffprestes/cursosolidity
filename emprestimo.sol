@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.19;
 
-import "contracts/taxa.sol";
-import "contracts/cadastro.sol";
+import "./taxa.sol";
+import "./cadastro.sol";
 
 contract EmprestimoComImport {
 
@@ -10,8 +10,8 @@ contract EmprestimoComImport {
     Cadastro cadastro;
 
     constructor() {
-        taxa = Taxa(0xEed2fE736e53E65412A3c3b8326260218bD40c16);
-        cadastro = Cadastro(0xF5d7882fC5248efC814Adc765fAb168DE45c3536);
+        taxa = Taxa(0x53958CAB8B8549970B2A8a63075D2FA2ea33c256);
+        cadastro = Cadastro(0xbFCA0dFfA6950A38B3Fd07641334f9392d73Fef0);
     }
 
     function simulaEmprestimo(uint256 valor, uint256 _idCliente) external view returns (uint256) {

@@ -37,8 +37,4 @@ contract MeuGalpao is ERC1155, Ownable, ERC1155Supply {
     {
         super._update(from, to, ids, values);
     }
-
-    function tokenURI(uint256 id) public view virtual returns (string memory) {
-        return string(abi.encodePacked(uri(id), id, ".json"));
-    }
 }
